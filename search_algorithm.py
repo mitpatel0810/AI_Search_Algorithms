@@ -23,7 +23,7 @@ rospy.init_node("search_algorithms")
 publisher = rospy.Publisher("/actions", String, queue_size=10)
 parser = argparse.ArgumentParser()
 parser.add_argument('-a', help="Please mention algorithm to use. Possible arguments = {bfs, ucs, gbfs, astar}. Default value is bfs.", metavar='bfs', action='store', dest='algorithm', default="bfs", type=str)
-parser.add_argument('-c', help="Use custom heuristic function. No value needed.", action='store_true', dest='custom_heuristic'
+parser.add_argument('-c', help="Use custom heuristic function. No value needed.", action='store_true', dest='custom_heuristic')
 
 def helper_bfs(init_state, goal_state):
 
@@ -97,11 +97,9 @@ def bfs(use_custom_heuristic):
                 else:
                     visited.append([node[1].x,node[1].y,node[1].orientation])
                     successor = helper.get_successor(node[1])
-
                     for key in successor:
                         l1 = list(key.split(","))
                         queue.append([node[0]+l1,successor[key][0]])
-
 
     return action_list
 
@@ -132,6 +130,7 @@ def ucs(use_custom_heuristic):
         queue.append([l, state_dictionary[key][0], state_dictionary[key][1]])
 
     while(queue):
+
         queue.sort(key = lambda ele: ele[2])
         node = queue.pop(0)
         if node[1].x < 0 or node[1].y < 0:
@@ -140,15 +139,12 @@ def ucs(use_custom_heuristic):
             if [node[1].x, node[1].y, node[1].orientation] not in visited:
                 if node[1].x == goal_state.x and node[1].y == goal_state.y and node[1].orientation == goal_state.orientation:
                     action_list = action_list + node[0]
-
                     break
                 else:
                     visited.append([node[1].x,node[1].y,node[1].orientation])
                     successor = helper.get_successor(node[1])
-
                     # print("Move: ", node[0])
                     # print("Successor: ",successor)
-
                     for key in successor:
                         l1 = list(key.split(","))
                         val = successor[key][1]
@@ -211,11 +207,11 @@ def gbfs(use_custom_heuristic):
         init_cost = 0
         queue = list()
         visited.append([init_state.x, init_state.y, init_state.orientation])
-
         array = gbfs_custom_heuristic(state_dictionary, goal_state, init_dir, init_cost)
         queue = queue + array
 
         while (queue):
+
             queue.sort(key = lambda ele: ele[3])
             node = queue.pop(0)
             if node[1].x < 0 or node[1].y < 0:
@@ -224,15 +220,12 @@ def gbfs(use_custom_heuristic):
                 if [node[1].x, node[1].y, node[1].orientation] not in visited:
                     if node[1].x == goal_state.x and node[1].y == goal_state.y and node[1].orientation == goal_state.orientation:
                         action_list = action_list + node[0]
-
                         break
                     else:
                         visited.append([node[1].x, node[1].y, node[1].orientation])
                         successor = helper.get_successor(node[1])
                         out_arr = gbfs_custom_heuristic(successor, goal_state, node[0], node[2])
                         queue = queue + out_arr
-
-
 
         return action_list
 
@@ -242,11 +235,11 @@ def gbfs(use_custom_heuristic):
         init_cost = 0
         queue = list()
         visited.append([init_state.x, init_state.y, init_state.orientation])
-
         array = gbfs_manhattan_heuristic(state_dictionary, goal_state, init_dir, init_cost)
         queue = queue + array
 
         while (queue):
+
             queue.sort(key  = lambda ele: ele[3])
             node = queue.pop(0)
             if node[1].x < 0 or node[1].y < 0:
@@ -256,7 +249,6 @@ def gbfs(use_custom_heuristic):
                 if [node[1].x, node[1].y, node[1].orientation] not in visited:
                     if node[1].x == goal_state.x and node[1].y == goal_state.y and node[1].orientation == goal_state.orientation:
                         action_list = action_list + node[0]
-
                         break
                     else:
                         visited.append([node[1].x, node[1].y, node[1].orientation])
@@ -288,16 +280,16 @@ def astar(use_custom_heuristic):
         init_dir = []
         init_cost = 0
         queue = list()
-        heuristic = 0.5
-        start_to_goal_man_dis = abs(init_state.x - goal_state.x) + abs(init_state.y - goal_state.y)
+        # heuristic = 0.5
+        # start_to_goal_man_dis = abs(init_state.x - goal_state.x) + abs(init_state.y - goal_state.y)
         visited.append([init_state.x, init_state.y, init_state.orientation])
 
         array = astar_custom_heuristic(state_dictionary, goal_state, init_dir, init_cost, init_state, visited)
         queue = queue + array
 
         while (queue):
-            queue.sort(key=lambda ele: ele[3])
 
+            queue.sort(key=lambda ele: ele[3])
             node = queue.pop(0)
             if node[1].x < 0 or node[1].y < 0:
                 continue
@@ -305,7 +297,6 @@ def astar(use_custom_heuristic):
                 if [node[1].x, node[1].y, node[1].orientation] not in visited:
                     if node[1].x == goal_state.x and node[1].y == goal_state.y and node[1].orientation == goal_state.orientation:
                         action_list = action_list + node[0]
-
                         break
                     else:
                         visited.append([node[1].x, node[1].y, node[1].orientation])
@@ -322,13 +313,12 @@ def astar(use_custom_heuristic):
         init_cost = 0
         queue = list()
         visited.append([init_state.x, init_state.y, init_state.orientation])
-
         array = astar_manhattan_heuristic(state_dictionary, goal_state, init_dir, init_cost, visited)
         queue = queue + array
 
         while (queue):
-            queue.sort(key=lambda ele: ele[3])
 
+            queue.sort(key=lambda ele: ele[3])
             node = queue.pop(0)
             if node[1].x < 0 or node[1].y < 0:
                 continue
@@ -336,14 +326,12 @@ def astar(use_custom_heuristic):
                 if [node[1].x, node[1].y, node[1].orientation] not in visited:
                     if node[1].x == goal_state.x and node[1].y == goal_state.y and node[1].orientation == goal_state.orientation:
                         action_list = action_list + node[0]
-
                         break
                     else:
                         visited.append([node[1].x, node[1].y, node[1].orientation])
                         successor = helper.get_successor(node[1])
                         out_arr = astar_manhattan_heuristic(successor, goal_state, node[0], node[2], visited)
                         queue = queue + out_arr
-
 
         return action_list
 
@@ -366,9 +354,12 @@ def gbfs_custom_heuristic(dictionary, goal_state, prev_dir, cost_to_reach_node):
             # distance = helper_bfs(dictionary[key][0], goal_state)
             state = (dictionary[key][0])
             if state.orientation == 'EAST' or state.orientation == 'NORTH':
-                distance = abs(dictionary[key][0].x - goal_state.x) + abs(dictionary[key][0].y - goal_state.y) - 1
+                if state.x >= 0 and state.y >= 0:
+                    distance = abs(dictionary[key][0].x - goal_state.x) + abs(dictionary[key][0].y - goal_state.y)
+                    distance = distance - (distance) / 3
             else:
-                distance = abs(dictionary[key][0].x - goal_state.x) + abs(dictionary[key][0].y - goal_state.y) + 1
+                distance = abs(dictionary[key][0].x - goal_state.x) + abs(dictionary[key][0].y - goal_state.y)
+                distance = distance + (distance) / 3
             g = dictionary[key][1] + cost_to_reach_node
             dir = list(key.split(","))
             temp.append([prev_dir+dir, state, g, distance])
@@ -406,9 +397,12 @@ def astar_custom_heuristic(dictionary, goal_state, prev_dir, cost_to_reach_node,
                 #h = helper_bfs(dictionary[key][0], goal_state)
                 state = (dictionary[key][0])
                 if state.orientation == 'EAST' or state.orientation == 'NORTH':
-                    h = abs(dictionary[key][0].x - goal_state.x) + abs(dictionary[key][0].y - goal_state.y) - 1
+                    if state.x >= 0 and state.y >= 0:
+                        h = abs(dictionary[key][0].x - goal_state.x) + abs(dictionary[key][0].y - goal_state.y)
+                        h = h - h/3
                 else:
-                    h = abs(dictionary[key][0].x - goal_state.x) + abs(dictionary[key][0].y - goal_state.y) + 1
+                    h = abs(dictionary[key][0].x - goal_state.x) + abs(dictionary[key][0].y - goal_state.y)
+                    h = h + h/3
                 g = dictionary[key][1] + cost_to_reach_node
 
                 total_distance = h + g
