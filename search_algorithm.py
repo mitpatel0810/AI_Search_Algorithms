@@ -45,7 +45,7 @@ def helper_bfs(init_state, goal_state):
             continue
         else:
             if [node[1].x, node[1].y, node[1].orientation] not in visited:
-                if node[1].x == goal_state.x and node[1].y == goal_state.y and node[1].orientation == goal_state.orientation:
+                if node[1].x == goal_state.x and node[1].y == goal_state.y:
                     cost = node[2]
                     break
                 else:
@@ -76,30 +76,31 @@ def bfs(use_custom_heuristic):
     '''
     YOUR CODE HERE
     '''
-    visited = []
-    visited.append([init_state.x, init_state.y, init_state.orientation])
-    queue = list()
+    if init_state.x != goal_state.x and init_state.y != goal_state.y:
+        visited = []
+        visited.append([init_state.x, init_state.y, init_state.orientation])
+        queue = list()
 
-    for key in state_dictionary:
-        l = list(key.split(","))
-        queue.append([l,state_dictionary[key][0]])
+        for key in state_dictionary:
+            l = list(key.split(","))
+            queue.append([l,state_dictionary[key][0]])
 
-    while(queue):
+        while(queue):
 
-        node = queue.pop(0)
-        if node[1].x < 0 or node[1].y < 0:
-            continue
-        else:
-            if [node[1].x, node[1].y, node[1].orientation] not in visited:
-                if node[1].x == goal_state.x and node[1].y == goal_state.y and node[1].orientation == goal_state.orientation:
-                    action_list = action_list + node[0]
-                    break
-                else:
-                    visited.append([node[1].x,node[1].y,node[1].orientation])
-                    successor = helper.get_successor(node[1])
-                    for key in successor:
-                        l1 = list(key.split(","))
-                        queue.append([node[0]+l1,successor[key][0]])
+            node = queue.pop(0)
+            if node[1].x < 0 or node[1].y < 0:
+                continue
+            else:
+                if [node[1].x, node[1].y, node[1].orientation] not in visited:
+                    if node[1].x == goal_state.x and node[1].y == goal_state.y:
+                        action_list = action_list + node[0]
+                        break
+                    else:
+                        visited.append([node[1].x,node[1].y,node[1].orientation])
+                        successor = helper.get_successor(node[1])
+                        for key in successor:
+                            l1 = list(key.split(","))
+                            queue.append([node[0]+l1,successor[key][0]])
 
     return action_list
 
@@ -120,36 +121,37 @@ def ucs(use_custom_heuristic):
     '''
     YOUR CODE HERE
     '''
+    if init_state.x != goal_state.x and init_state.y != goal_state.y:
 
-    visited = []
-    queue = list()
-    visited.append([init_state.x, init_state.y, init_state.orientation])
+        visited = []
+        queue = list()
+        visited.append([init_state.x, init_state.y, init_state.orientation])
 
-    for key in state_dictionary:
-        l = list(key.split(","))
-        queue.append([l, state_dictionary[key][0], state_dictionary[key][1]])
+        for key in state_dictionary:
+            l = list(key.split(","))
+            queue.append([l, state_dictionary[key][0], state_dictionary[key][1]])
 
-    while(queue):
+        while(queue):
 
-        queue.sort(key = lambda ele: ele[2])
-        node = queue.pop(0)
-        if node[1].x < 0 or node[1].y < 0:
-            continue
-        else:
-            if [node[1].x, node[1].y, node[1].orientation] not in visited:
-                if node[1].x == goal_state.x and node[1].y == goal_state.y and node[1].orientation == goal_state.orientation:
-                    action_list = action_list + node[0]
-                    break
-                else:
-                    visited.append([node[1].x,node[1].y,node[1].orientation])
-                    successor = helper.get_successor(node[1])
-                    # print("Move: ", node[0])
-                    # print("Successor: ",successor)
-                    for key in successor:
-                        l1 = list(key.split(","))
-                        val = successor[key][1]
-                        queue.append([node[0]+l1,successor[key][0],node[2]+val])
-
+            queue.sort(key = lambda ele: ele[2])
+            node = queue.pop(0)
+            if node[1].x < 0 or node[1].y < 0:
+                continue
+            else:
+                if [node[1].x, node[1].y, node[1].orientation] not in visited:
+                    if node[1].x == goal_state.x and node[1].y == goal_state.y:
+                        action_list = action_list + node[0]
+                        break
+                    else:
+                        visited.append([node[1].x,node[1].y,node[1].orientation])
+                        successor = helper.get_successor(node[1])
+                        # print("Move: ", node[0])
+                        # print("Successor: ",successor)
+                        for key in successor:
+                            l1 = list(key.split(","))
+                            val = successor[key][1]
+                            queue.append([node[0]+l1,successor[key][0],node[2]+val])
+    return action_list
     # visited = []
     # queue = list()
     # visited.append([init_state.x, init_state.y, init_state.orientation])
@@ -183,7 +185,7 @@ def ucs(use_custom_heuristic):
     #                     heapq.heappush(queue, ([node[0]+val, c2, (node[2][0]+l1, successor[key][0])]))
     #                     c2 = c2 + 1
 
-    return action_list
+
 
 def gbfs(use_custom_heuristic):
     '''
@@ -202,59 +204,63 @@ def gbfs(use_custom_heuristic):
     YOUR CODE HERE
     '''
     if use_custom_heuristic:
-        visited = []
-        init_dir = []
-        init_cost = 0
-        queue = list()
-        visited.append([init_state.x, init_state.y, init_state.orientation])
-        array = gbfs_custom_heuristic(state_dictionary, goal_state, init_dir, init_cost)
-        queue = queue + array
+        if init_state.x != goal_state.x and init_state.y != goal_state.y:
 
-        while (queue):
+            visited = []
+            init_dir = []
+            init_cost = 0
+            queue = list()
+            visited.append([init_state.x, init_state.y, init_state.orientation])
+            array = gbfs_custom_heuristic(state_dictionary, goal_state, init_dir, init_cost)
+            queue = queue + array
 
-            queue.sort(key = lambda ele: ele[3])
-            node = queue.pop(0)
-            if node[1].x < 0 or node[1].y < 0:
-                continue
-            else:
-                if [node[1].x, node[1].y, node[1].orientation] not in visited:
-                    if node[1].x == goal_state.x and node[1].y == goal_state.y and node[1].orientation == goal_state.orientation:
-                        action_list = action_list + node[0]
-                        break
-                    else:
-                        visited.append([node[1].x, node[1].y, node[1].orientation])
-                        successor = helper.get_successor(node[1])
-                        out_arr = gbfs_custom_heuristic(successor, goal_state, node[0], node[2])
-                        queue = queue + out_arr
+            while (queue):
+
+                queue.sort(key = lambda ele: ele[3])
+                node = queue.pop(0)
+                if node[1].x < 0 or node[1].y < 0:
+                    continue
+                else:
+                    if [node[1].x, node[1].y, node[1].orientation] not in visited:
+                        if node[1].x == goal_state.x and node[1].y == goal_state.y:
+                            action_list = action_list + node[0]
+                            break
+                        else:
+                            visited.append([node[1].x, node[1].y, node[1].orientation])
+                            successor = helper.get_successor(node[1])
+                            out_arr = gbfs_custom_heuristic(successor, goal_state, node[0], node[2])
+                            queue = queue + out_arr
 
         return action_list
 
     else:
-        visited = []
-        init_dir = []
-        init_cost = 0
-        queue = list()
-        visited.append([init_state.x, init_state.y, init_state.orientation])
-        array = gbfs_manhattan_heuristic(state_dictionary, goal_state, init_dir, init_cost)
-        queue = queue + array
+        if init_state.x != goal_state.x and init_state.y != goal_state.y:
 
-        while (queue):
+            visited = []
+            init_dir = []
+            init_cost = 0
+            queue = list()
+            visited.append([init_state.x, init_state.y, init_state.orientation])
+            array = gbfs_manhattan_heuristic(state_dictionary, goal_state, init_dir, init_cost)
+            queue = queue + array
 
-            queue.sort(key  = lambda ele: ele[3])
-            node = queue.pop(0)
-            if node[1].x < 0 or node[1].y < 0:
-                continue
-            else:
+            while (queue):
 
-                if [node[1].x, node[1].y, node[1].orientation] not in visited:
-                    if node[1].x == goal_state.x and node[1].y == goal_state.y and node[1].orientation == goal_state.orientation:
-                        action_list = action_list + node[0]
-                        break
-                    else:
-                        visited.append([node[1].x, node[1].y, node[1].orientation])
-                        successor = helper.get_successor(node[1])
-                        out_arr = gbfs_manhattan_heuristic(successor, goal_state, node[0], node[2])
-                        queue = queue + out_arr
+                queue.sort(key  = lambda ele: ele[3])
+                node = queue.pop(0)
+                if node[1].x < 0 or node[1].y < 0:
+                    continue
+                else:
+
+                    if [node[1].x, node[1].y, node[1].orientation] not in visited:
+                        if node[1].x == goal_state.x and node[1].y == goal_state.y:
+                            action_list = action_list + node[0]
+                            break
+                        else:
+                            visited.append([node[1].x, node[1].y, node[1].orientation])
+                            successor = helper.get_successor(node[1])
+                            out_arr = gbfs_manhattan_heuristic(successor, goal_state, node[0], node[2])
+                            queue = queue + out_arr
 
         return action_list
 
@@ -276,62 +282,66 @@ def astar(use_custom_heuristic):
     YOUR CODE HERE
     '''
     if use_custom_heuristic:
-        visited = []
-        init_dir = []
-        init_cost = 0
-        queue = list()
-        # heuristic = 0.5
-        # start_to_goal_man_dis = abs(init_state.x - goal_state.x) + abs(init_state.y - goal_state.y)
-        visited.append([init_state.x, init_state.y, init_state.orientation])
+        if init_state.x != goal_state.x and init_state.y != goal_state.y:
 
-        array = astar_custom_heuristic(state_dictionary, goal_state, init_dir, init_cost, init_state, visited)
-        queue = queue + array
+            visited = []
+            init_dir = []
+            init_cost = 0
+            queue = list()
+            # heuristic = 0.5
+            # start_to_goal_man_dis = abs(init_state.x - goal_state.x) + abs(init_state.y - goal_state.y)
+            visited.append([init_state.x, init_state.y, init_state.orientation])
 
-        while (queue):
+            array = astar_custom_heuristic(state_dictionary, goal_state, init_dir, init_cost, init_state, visited)
+            queue = queue + array
 
-            queue.sort(key=lambda ele: ele[3])
-            node = queue.pop(0)
-            if node[1].x < 0 or node[1].y < 0:
-                continue
-            else:
-                if [node[1].x, node[1].y, node[1].orientation] not in visited:
-                    if node[1].x == goal_state.x and node[1].y == goal_state.y and node[1].orientation == goal_state.orientation:
-                        action_list = action_list + node[0]
-                        break
-                    else:
-                        visited.append([node[1].x, node[1].y, node[1].orientation])
-                        successor = helper.get_successor(node[1])
-                        out_arr = astar_custom_heuristic(successor, goal_state, node[0], node[2], init_state, visited)
-                        queue = queue + out_arr
+            while (queue):
+
+                queue.sort(key=lambda ele: ele[3])
+                node = queue.pop(0)
+                if node[1].x < 0 or node[1].y < 0:
+                    continue
+                else:
+                    if [node[1].x, node[1].y, node[1].orientation] not in visited:
+                        if node[1].x == goal_state.x and node[1].y == goal_state.y:
+                            action_list = action_list + node[0]
+                            break
+                        else:
+                            visited.append([node[1].x, node[1].y, node[1].orientation])
+                            successor = helper.get_successor(node[1])
+                            out_arr = astar_custom_heuristic(successor, goal_state, node[0], node[2], init_state, visited)
+                            queue = queue + out_arr
 
 
         return action_list
 
     else:
-        visited = []
-        init_dir = []
-        init_cost = 0
-        queue = list()
-        visited.append([init_state.x, init_state.y, init_state.orientation])
-        array = astar_manhattan_heuristic(state_dictionary, goal_state, init_dir, init_cost, visited)
-        queue = queue + array
+        if init_state.x != goal_state.x and init_state.y != goal_state.y:
 
-        while (queue):
+            visited = []
+            init_dir = []
+            init_cost = 0
+            queue = list()
+            visited.append([init_state.x, init_state.y, init_state.orientation])
+            array = astar_manhattan_heuristic(state_dictionary, goal_state, init_dir, init_cost, visited)
+            queue = queue + array
 
-            queue.sort(key=lambda ele: ele[3])
-            node = queue.pop(0)
-            if node[1].x < 0 or node[1].y < 0:
-                continue
-            else:
-                if [node[1].x, node[1].y, node[1].orientation] not in visited:
-                    if node[1].x == goal_state.x and node[1].y == goal_state.y and node[1].orientation == goal_state.orientation:
-                        action_list = action_list + node[0]
-                        break
-                    else:
-                        visited.append([node[1].x, node[1].y, node[1].orientation])
-                        successor = helper.get_successor(node[1])
-                        out_arr = astar_manhattan_heuristic(successor, goal_state, node[0], node[2], visited)
-                        queue = queue + out_arr
+            while (queue):
+
+                queue.sort(key=lambda ele: ele[3])
+                node = queue.pop(0)
+                if node[1].x < 0 or node[1].y < 0:
+                    continue
+                else:
+                    if [node[1].x, node[1].y, node[1].orientation] not in visited:
+                        if node[1].x == goal_state.x and node[1].y == goal_state.y:
+                            action_list = action_list + node[0]
+                            break
+                        else:
+                            visited.append([node[1].x, node[1].y, node[1].orientation])
+                            successor = helper.get_successor(node[1])
+                            out_arr = astar_manhattan_heuristic(successor, goal_state, node[0], node[2], visited)
+                            queue = queue + out_arr
 
         return action_list
 
@@ -351,10 +361,10 @@ def gbfs_custom_heuristic(dictionary, goal_state, prev_dir, cost_to_reach_node):
         if dictionary[key][0].x < 0 or dictionary[key][0].y < 0:
             continue
         else:
+
             # distance = helper_bfs(dictionary[key][0], goal_state)
             state = (dictionary[key][0])
             if state.orientation == 'EAST' or state.orientation == 'NORTH':
-                if state.x >= 0 and state.y >= 0:
                     distance = abs(dictionary[key][0].x - goal_state.x) + abs(dictionary[key][0].y - goal_state.y)
                     distance = distance - (distance) / 3
             else:
@@ -395,6 +405,7 @@ def astar_custom_heuristic(dictionary, goal_state, prev_dir, cost_to_reach_node,
                 #h2 = abs(dictionary[key][0].x - goal_state.x) + abs(dictionary[key][0].y - goal_state.y)
                 #h = max(h1,h2)
                 #h = helper_bfs(dictionary[key][0], goal_state)
+
                 state = (dictionary[key][0])
                 if state.orientation == 'EAST' or state.orientation == 'NORTH':
                     if state.x >= 0 and state.y >= 0:
